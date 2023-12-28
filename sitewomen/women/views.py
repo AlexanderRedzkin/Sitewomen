@@ -1,8 +1,10 @@
 from django.http import HttpResponse, HttpResponseNotFound, Http404
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.template.defaultfilters import slugify
 from django.urls import reverse
 from django.template.loader import render_to_string
+
+from .models import Women
 
 menu = [{'title': "О сайте", 'url_name': 'about'},
         {'title': "Добавить статью", 'url_name': 'add_page'},
@@ -12,7 +14,7 @@ menu = [{'title': "О сайте", 'url_name': 'about'},
 # Create your views here.
 
 data_db = [
-    {'id': 1, 'title': 'Кристина Редькина', 'content': '''<h1> Кристина Редькина </h1> Американская актриса кино, телевидения и озвучивания, кинорежиссёр, сценаристка, продюсер, фотомодель, посол доброй воли ООН. Обладательница премии «Оскар», трёх премий «Золотой глобус» и двух «Премий Гильдии киноактёров США». Джоли начала работать моделью на показах одежды уже в 14 лет, преимущественно в Нью-Йорке, Лос-Анджелесе и Лондоне. Кроме того, она появилась в нескольких музыкальных видеоклипах, в том числе у Ленни Кравица (видео Stand By My Woman, 1991) и Meat Loaf (видео RockRoll Dreams Come Through, 1994), после чего в возрасте 16 лет вернулась в театр''', 'is_published': True},
+    {'id': 1, 'title': 'Анджелина Джоли', 'content': ''' Американская актриса кино, телевидения и озвучивания, кинорежиссёр, сценаристка, продюсер, фотомодель, посол доброй воли ООН. Обладательница премии «Оскар», трёх премий «Золотой глобус» и двух «Премий Гильдии киноактёров США». Джоли начала работать моделью на показах одежды уже в 14 лет, преимущественно в Нью-Йорке, Лос-Анджелесе и Лондоне. Кроме того, она появилась в нескольких музыкальных видеоклипах, в том числе у Ленни Кравица (видео Stand By My Woman, 1991) и Meat Loaf (видео RockRoll Dreams Come Through, 1994), после чего в возрасте 16 лет вернулась в театр''', 'is_published': True},
     {'id': 2, 'title': 'Марго Роби', 'content': 'Биография Марго Роби', 'is_published': False},
     {'id': 3, 'title': 'Джулия Робертс', 'content': ' Биография Джулии Робертс', 'is_published': True},
 ]
@@ -25,10 +27,11 @@ cats_db = [
 
 
 def index(request):
+    posts = Women.objects.filter(is_published=1)
     data = {
         'title': 'Главная страница',
         'menu': menu,
-        'posts': data_db,
+        'posts': posts,
         'cat_selected': 0,
     }  # 1 подход передачи данных в шаблон
     # t = render_to_string('women/index.html') #функция для передачи пути к html-шаблона
@@ -40,8 +43,17 @@ def about(request):
     return render(request, 'women/about.html', {'title': 'О сайте'})  # 2 подход (про 3 аргумент)
 
 
-def show_post(request, post_id):
-    return HttpResponse(f'Отображение статьи с id = {post_id}')
+def show_post(request, post_slug):
+    post = get_object_or_404(Women, slug=post_slug) # функция возвращает одину запись из таблицы, либо генерит исключение
+
+    data = {
+        'title': post.title,
+        'menu': menu,
+        'post': post,
+        'cat_selected': 1,
+    }
+
+    return render(request, 'women/post.html', data)
 
 
 def addpage(request):
