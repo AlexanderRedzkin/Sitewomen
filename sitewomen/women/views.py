@@ -34,7 +34,7 @@ def index(request):
         'menu': menu,
         'posts': posts,
         'cat_selected': 0,
-    }  
+    }
     # 1 подход передачи данных в шаблон
     # t = render_to_string('women/index.html') #функция для передачи пути к html-шаблона
     # return HttpResponse(t) # 'эти строчки 2 можно заменить на:
