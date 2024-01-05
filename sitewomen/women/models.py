@@ -18,7 +18,7 @@ class Women(models.Model):
     time_create = models.DateTimeField(auto_now_add=True)
     time_update = models.DateTimeField(auto_now=True)
     is_published = models.BooleanField(choices=Status.choices, default=Status.DRAFT) # передали choices описания публикации
-    cat = models.ForeignKey('Category', on_delete=models.PROTECT, null=True)
+    cat = models.ForeignKey('Category', on_delete=models.PROTECT, related_name='posts') # послежним параметром ранее указывали null=True
 
     objects = models.Manager()
     published = PublishedManager()
