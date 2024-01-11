@@ -4,7 +4,7 @@ from django.template.defaultfilters import slugify
 from django.urls import reverse
 from django.template.loader import render_to_string
 
-from .models import Women
+from .models import Women, Category, TagPost
 
 menu = [{'title': "О сайте", 'url_name': 'about'},
         {'title': "Добавить статью", 'url_name': 'add_page'},
@@ -17,12 +17,6 @@ data_db = [
     {'id': 1, 'title': 'Анджелина Джоли', 'content': ''' Американская актриса кино, телевидения и озвучивания, кинорежиссёр, сценаристка, продюсер, фотомодель, посол доброй воли ООН. Обладательница премии «Оскар», трёх премий «Золотой глобус» и двух «Премий Гильдии киноактёров США». Джоли начала работать моделью на показах одежды уже в 14 лет, преимущественно в Нью-Йорке, Лос-Анджелесе и Лондоне. Кроме того, она появилась в нескольких музыкальных видеоклипах, в том числе у Ленни Кравица (видео Stand By My Woman, 1991) и Meat Loaf (видео RockRoll Dreams Come Through, 1994), после чего в возрасте 16 лет вернулась в театр''', 'is_published': True},
     {'id': 2, 'title': 'Марго Роби', 'content': 'Биография Марго Роби', 'is_published': False},
     {'id': 3, 'title': 'Джулия Робертс', 'content': ' Биография Джулии Робертс', 'is_published': True},
-]
-
-cats_db = [
-    {'id': 1, 'name': 'Актрисы'},
-    {'id': 2, 'name': 'Певицы'},
-    {'id': 3, 'name': 'Спортсменки'},
 ]
 
 
@@ -69,12 +63,15 @@ def contact(request):
 def login(request):
     return HttpResponse('Авторизация')
 
-def show_category(request, cat_id):
+def show_category(request, cat_slug):
+    category = get_object_or_404(Category, slug=cat_slug)
+    posts = Women.published.filter(cat_id=category.pk)
+
     data = {
-        'title': 'Отображение по рубрикам',
+        'title': f'Рубрика: {category.name}',
         'menu': menu,
-        'posts': data_db,
-        'cat_selected': cat_id,
+        'posts': posts,
+        'cat_selected': category.pk,
     }
     return render(request, 'women/index.html', context=data)
 
@@ -88,3 +85,16 @@ def show_category(request, cat_id):
 
 def page_not_found(request, exception):  # представление обрабатыващее исключение
     return HttpResponseNotFound("<h1>Страница не найдена</h1>")
+
+def show_tag_postlist(request, tag_slug):
+    tag = get_object_or_404(TagPost, slug=tag_slug)
+    posts = tag.tags.filter(is_published=Women.Status.PUBLISHED) #получаем все записи связанные с этим тегом
+
+    data = {
+        'title': f"Тег: {tag.tag}",
+        'menu': menu,
+        'posts': posts,
+        'cat_selected': None,
+    }
+
+    return render(request, 'women/index.html', context=data)
