@@ -20,6 +20,7 @@ class Women(models.Model):
     is_published = models.BooleanField(choices=Status.choices, default=Status.DRAFT) # передали choices описания публикации
     cat = models.ForeignKey('Category', on_delete=models.PROTECT, related_name='posts') # послежним параметром ранее указывали null=True
     tags = models.ManyToManyField('TagPost', blank=True, related_name='tags')
+    husband = models.OneToOneField('Husband', on_delete=models.SET_NULL, null=True, blank=True, related_name='wuman')
 
     objects = models.Manager()
     published = PublishedManager()
@@ -55,3 +56,11 @@ class TagPost(models.Model):
 
     def get_absolute_url(self): #будет возвращать тот или иной адрес для конкретно url адреса
         return reverse('tag', kwargs={'tag_slug': self.slug})
+
+class Husband(models.Model):
+    name = models.CharField(max_length=100)
+    age = models.IntegerField(null=True)
+
+    def __str__(self):
+        return self.name
+# w1.husband = h1 добавили нового мужа
