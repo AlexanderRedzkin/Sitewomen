@@ -21,8 +21,8 @@ from women.views import page_not_found
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', include('women.urls'))#если мы в '' пропишем суффикс 'women', все url будут начинаться с него 'http://127.0.0.1:8000/women'
-    
+    path('', include('women.urls')),#если мы в '' пропишем суффикс 'women', все url будут начинаться с него 'http://127.0.0.1:8000/women'
+    path("__debug__/", include("debug_toolbar.urls")),
 
 ]
 

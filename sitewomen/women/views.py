@@ -13,15 +13,10 @@ menu = [{'title': "О сайте", 'url_name': 'about'},
 ]
 # Create your views here.
 
-data_db = [
-    {'id': 1, 'title': 'Анджелина Джоли', 'content': ''' Американская актриса кино, телевидения и озвучивания, кинорежиссёр, сценаристка, продюсер, фотомодель, посол доброй воли ООН. Обладательница премии «Оскар», трёх премий «Золотой глобус» и двух «Премий Гильдии киноактёров США». Джоли начала работать моделью на показах одежды уже в 14 лет, преимущественно в Нью-Йорке, Лос-Анджелесе и Лондоне. Кроме того, она появилась в нескольких музыкальных видеоклипах, в том числе у Ленни Кравица (видео Stand By My Woman, 1991) и Meat Loaf (видео RockRoll Dreams Come Through, 1994), после чего в возрасте 16 лет вернулась в театр''', 'is_published': True},
-    {'id': 2, 'title': 'Марго Роби', 'content': 'Биография Марго Роби', 'is_published': False},
-    {'id': 3, 'title': 'Джулия Робертс', 'content': ' Биография Джулии Робертс', 'is_published': True},
-]
 
 
 def index(request):
-    posts = Women.published.all() #Все опубликованные статьи
+    posts = Women.published.all().select_related('cat') #Все опубликованные статьи
 
     data = {
         'title': 'Главная страница',
@@ -65,7 +60,7 @@ def login(request):
 
 def show_category(request, cat_slug):
     category = get_object_or_404(Category, slug=cat_slug)
-    posts = Women.published.filter(cat_id=category.pk)
+    posts = Women.published.filter(cat_id=category.pk).select_related("cat")
 
     data = {
         'title': f'Рубрика: {category.name}',
@@ -88,7 +83,7 @@ def page_not_found(request, exception):  # представление обраб
 
 def show_tag_postlist(request, tag_slug):
     tag = get_object_or_404(TagPost, slug=tag_slug)
-    posts = tag.tags.filter(is_published=Women.Status.PUBLISHED) #получаем все записи связанные с этим тегом
+    posts = tag.tags.filter(is_published=Women.Status.PUBLISHED).select_related("cat") #получаем все записи связанные с этим тегом
 
     data = {
         'title': f"Тег: {tag.tag}",
