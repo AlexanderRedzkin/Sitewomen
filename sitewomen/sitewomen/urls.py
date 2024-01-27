@@ -27,3 +27,7 @@ urlpatterns = [
 ]
 
 handler404 = page_not_found #обработчик при возникновении исключений 404
+
+#Изменим внешний вид админки (описание)
+admin.site.site_header = 'Панель администрирования'
+admin.site.index_title = 'Звёздные женщины мира'

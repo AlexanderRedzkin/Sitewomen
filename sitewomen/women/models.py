@@ -12,15 +12,15 @@ class Women(models.Model):
         DRAFT = 0, 'Черновик'
         PUBLISHED = 1, 'Опубликовано'
 
-    title = models.CharField(max_length=255)
-    slug = models.SlugField(max_length=255, unique=True, db_index=True) # В начале добавить blank=True и default='', после создания удалить и поставить unique=True
-    content = models.TextField(blank=True)
-    time_create = models.DateTimeField(auto_now_add=True)
-    time_update = models.DateTimeField(auto_now=True)
-    is_published = models.BooleanField(choices=Status.choices, default=Status.DRAFT) # передали choices описания публикации
-    cat = models.ForeignKey('Category', on_delete=models.PROTECT, related_name='posts') # послежним параметром ранее указывали null=True
-    tags = models.ManyToManyField('TagPost', blank=True, related_name='tags')
-    husband = models.OneToOneField('Husband', on_delete=models.SET_NULL, null=True, blank=True, related_name='wuman')
+    title = models.CharField(max_length=255, verbose_name='Заголовок')
+    slug = models.SlugField(max_length=255, unique=True, db_index=True, verbose_name='Slug') # В начале добавить blank=True и default='', после создания удалить и поставить unique=True
+    content = models.TextField(blank=True, verbose_name='Текст статьи')
+    time_create = models.DateTimeField(auto_now_add=True, verbose_name='Время создания')
+    time_update = models.DateTimeField(auto_now=True, verbose_name='Время изменения')
+    is_published = models.BooleanField(choices=Status.choices, default=Status.DRAFT, verbose_name='Статус') # передали choices описания публикации
+    cat = models.ForeignKey('Category', on_delete=models.PROTECT, related_name='posts', verbose_name='Категории') # послежним параметром ранее указывали null=True
+    tags = models.ManyToManyField('TagPost', blank=True, related_name='tags', verbose_name='Теги')
+    husband = models.OneToOneField('Husband', on_delete=models.SET_NULL, null=True, blank=True, related_name='wuman', verbose_name='Муж')
 
     objects = models.Manager()
     published = PublishedManager()
@@ -29,6 +29,8 @@ class Women(models.Model):
     # Добавление записей Women.objects.create(title="Ариана Гранде", slug="ariana-grande", cat_id=2)
     # Сортировка данных
     class Meta:
+        verbose_name = 'Звёзды' # изменяем название модели в админке
+        verbose_name_plural = 'Звёзды' # отображение во множественном числе
         ordering = ['-time_create']
         indexes = [
             models.Index(fields=['-time_create'])
