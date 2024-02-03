@@ -11,10 +11,14 @@ class WomenAdmin(admin.ModelAdmin):
 #n.site.register(Women, WomenAdmin) лучшая практика, через декоратор
     list_editable = ('is_published', ) #для редактирования записей
     list_per_page = 5
+    actions = ['set_published']
 
     @admin.display(description="Краткое описание", ordering="content")
     def brief_info(self, women: Women):
         return f"Описание {len(women.content)} символов."
+    @admin.action(description='Опубликовать выбранные записи')
+    def set_published(self, request, queryset):
+        queryset.update(is_published=Women.Status.PUBLISHED)
 @admin.register(Category)
 class CategoryAdmin(admin.ModelAdmin):
     list_display = ('id', 'name')
