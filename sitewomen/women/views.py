@@ -52,7 +52,13 @@ def addpage(request):
     if request.method == 'POST': # Если форма была передана по POST запросу
         form = AddPostForm(request.POST) # то мы формируем объект класса AddPostForm
         if form.is_valid(): # проверяем данные
-            print(form.cleaned_data)
+            #print(form.cleaned_data)
+            try:
+                Women.objects.create(**form.cleaned_data)
+                return redirect('home')
+            except:
+                form.add_error(None, "Ошибка добавления поста")
+
     else: # Если обычный GЕТ запрос
         form = AddPostForm() # мы формируем объект этого класса, но с пустыми полями
 
